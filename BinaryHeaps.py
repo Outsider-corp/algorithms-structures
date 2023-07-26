@@ -109,30 +109,30 @@ class MaxBinaryHeap:
             size -= 1
             heap.sift_down(0, size)
 
-
-# Подаём на вход массив значений, преобразуем его в список с целочисленными значениями
-inp = input("Input array:")
-arr = list(map(int, inp.split()))
-heap = MaxBinaryHeap(arr)
-while True:
-    inp = input()
-    if inp == "q":
-        break
-    elif "add" in inp:
-        heap.insert(int(inp.split()[-1]))
-    elif "remove" in inp:
-        heap.remove(int(inp.split()[-1]))
-    elif "change" in inp:
-        heap.change_priority(int(inp.split()[-2]), int(inp.split()[-1]))
-    elif inp == "heap":
-        print(heap.H)
-    elif inp == "sort":
-        heap.heap_sort()
-    elif inp == "heap again":
-        heap.create_heap()
-    elif inp == "new heap":
-        inp = input("Input array:")
-        arr = list(map(int, inp.split()))
-        heap = MaxBinaryHeap(arr)
-    else:
-        print("no actions.")
+if __name__ == '__main__':
+    # Подаём на вход массив значений, преобразуем его в список с целочисленными значениями
+    inp = input("Input array:")
+    arr = list(map(int, inp.split()))
+    heap = MaxBinaryHeap(arr)
+    while True:
+        inp = input()
+        if inp == "q":
+            break
+        elif "add" in inp:
+            heap.insert(int(inp.split()[-1]))
+        elif "remove" in inp:
+            heap.remove(int(inp.split()[-1]))
+        elif "change" in inp:
+            heap.change_priority(int(inp.split()[-2]), int(inp.split()[-1]))
+        elif inp == "heap":
+            print(heap.H)
+        elif inp == "sort":
+            heap.heap_sort()
+        elif inp == "heap again":
+            heap.create_heap()
+        elif inp == "new heap":
+            inp = input("Input array:")
+            arr = list(map(int, inp.split()))
+            heap = MaxBinaryHeap(arr)
+        else:
+            print("no actions.")
