@@ -1,10 +1,17 @@
 def hash_full(s):
-    x_temp = 1
     hash_pattern = 0
-    for i in s:
-        hash_pattern = (hash_pattern + ord(i) * x_temp) % p
+    for num, i in enumerate(s):
+        hash_pattern = (hash_pattern % p + ord(i) * xes[num] % p) % p
+    return hash_pattern
+
+
+def find_x(x, n):
+    x_temp = 1
+    xes = [x_temp]
+    for _ in range(n - 1):
         x_temp *= x
-    return hash_pattern, x_temp/x
+        xes.append(x_temp % p)
+    return xes
 
 
 if __name__ == '__main__':
@@ -13,21 +20,17 @@ if __name__ == '__main__':
 
     p = 1000000007
     x = 263
-    hashes = []
     comp = []
-
-    hash_pattern, x_p1 = hash_full(pattern)
-    hash_temp, _ = hash_full(str_full[len(str_full) - len(pattern):])
-    hashes.append(hash_temp)
+    xes = find_x(x, len(pattern))
+    x_p1 = xes[-1]
+    hash_pattern = hash_full(pattern)
+    new_hash = hash_full(str_full[len(str_full) - len(pattern):])
+    if new_hash == hash_pattern:
+        if pattern == str_full[len(str_full) - len(pattern):]:
+            comp.append(len(str_full) - len(pattern))
     for i in range(len(str_full) - len(pattern) - 1, -1, -1):
-        new_hash = ((hashes[0] - ord(str_full[i + len(pattern)]) * x_p1) * x + ord(str_full[i])) % p
-        hashes.insert(0, new_hash)
-    for num, i in enumerate(hashes):
-        if i == hash_pattern:
-            chk = True
-            for sim in range(len(pattern)):
-                if pattern[sim] != str_full[num + sim]:
-                    chk = False
-            if chk:
-                comp.append(num)
-    print(comp)
+        new_hash = ((new_hash - ord(str_full[i + len(pattern)]) * x_p1 % p) * x % p + ord(str_full[i]) % p) % p
+        if new_hash == hash_pattern:
+            if pattern == str_full[i:i + len(pattern)]:
+                comp.append(i)
+    print(" ".join(list(map(str, comp[::-1]))))
