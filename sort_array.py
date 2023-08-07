@@ -55,9 +55,54 @@ def count_sort(array):
             return
     new_arr = []
     for i, num in enumerate(frequency):
-        new_arr.extend([i]*num)
+        new_arr.extend([i] * num)
     for i in range(len(array)):
         array[i] = new_arr[i]
+
+
+def merge_sort(array, left: int = 0, right: int = -1):
+    """
+    Сортировка слиянием (рекурсивная сортировка). Массив делится на 2 равные (+-) части,
+    сортируется каждая из этих частей, а затем 2 массива проходятся, попарно сравниваясь и заносятся в
+    новый массив уже в правильном порядке.
+    :param array: list - массив, который нужно отсортировать
+    :param left: int - индекс крайнего левого элемента
+    :param left: int - индекс крайнего правого элемента + 1
+    :return:
+    """
+    right = right if right != -1 else len(array)
+    if right - left == 1:
+        return
+    # Делим массив на 2 равные (+-) части
+    middle = (left + right) // 2
+    # Рекурсивно сортируем каждую из этих частей
+    merge_sort(array, left, middle)
+    merge_sort(array, middle, right)
+
+    # Соединяем полученные части путём сравнения элементов через два указателя
+    res_list = [0] * (right - left)
+    i = left
+    j = middle
+    n = 0
+    while i < middle and j < right:
+        if array[i] <= array[j]:
+            res_list[n] = array[i]
+            n += 1
+            i += 1
+        else:
+            res_list[n] = array[j]
+            n += 1
+            j += 1
+    else:
+        if i < middle:
+            res_list[n:] = array[i:middle]
+        elif j < left + right:
+            res_list[n:] = array[j:right]
+
+    # Меняем значения в изначальном массиве на отсортированные
+    for i in range(left, right):
+        array[i] = res_list[i - left]
+
 
 def test_sort(sort_algorithm, array, num_test):
     """
@@ -74,9 +119,9 @@ def test_sort(sort_algorithm, array, num_test):
 
 
 if __name__ == '__main__':
-    for sort in [insert_sort, choise_sort, bubble_sort, count_sort]:
+    for sort in [insert_sort, choise_sort, bubble_sort, count_sort, merge_sort]:
         for num, arr in enumerate([[9, 1, 2, 4, 1],
                                    [0.9, 0.1, 0.5, 0.2, 0.4],
                                    list(range(4, 20)) + list(range(10))]):
-            test_sort(sort, arr, num+1)
+            test_sort(sort, arr, num + 1)
         print()
