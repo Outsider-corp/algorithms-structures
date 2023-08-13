@@ -104,6 +104,34 @@ def merge_sort(array, left: int = 0, right: int = -1):
         array[i] = res_list[i - left]
 
 
+def quicksort(array: list):
+    """
+    Алгоритм быстрой сортировки (алгоритм Тони Хоара). Вначале выбирается любой элемент массива,
+    затем массив делится на 3: меньше, чем выбранный; равные выбранному; больше, чем выбранный.
+    Затем каждая часть рекурсивно сортируется.
+    Алгоритм с дополнительной памятью.
+    :param array: list - сортируемый массив
+    """
+    if not array:
+        return
+    barrier = array[0]
+    left = []
+    middle = []
+    right = []
+    for i in array:
+        if i < barrier:
+            left.append(i)
+        elif i == barrier:
+            middle.append(i)
+        else:
+            right.append(i)
+    quicksort(left)
+    quicksort(right)
+    for i, el in enumerate(left+middle+right):
+        array[i] = el
+
+
+
 def test_sort(sort_algorithm, array, num_test):
     """
     Тест для функций сортировки
@@ -119,7 +147,7 @@ def test_sort(sort_algorithm, array, num_test):
 
 
 if __name__ == '__main__':
-    for sort in [insert_sort, choise_sort, bubble_sort, count_sort, merge_sort]:
+    for sort in [insert_sort, choise_sort, bubble_sort, count_sort, merge_sort, quicksort]:
         for num, arr in enumerate([[9, 1, 2, 4, 1],
                                    [0.9, 0.1, 0.5, 0.2, 0.4],
                                    list(range(4, 20)) + list(range(10))]):
