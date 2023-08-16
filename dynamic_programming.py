@@ -35,10 +35,10 @@ def count_min_cost(n: int, prices: list):
     :param prices: list - список стоимостей посещения точек
     :return: float - минимальная стоимость
     """
-    costs = [prices[0], prices[1]] + [0] *(n-2)
+    costs = [prices[0], prices[0] + prices[1]] + [0] * (n - 2)
     for i in range(2, n):
-        costs[i] = prices[i] + min(costs[i-2], costs[i-1])
-    return costs[n-1]
+        costs[i] = prices[i] + min(costs[i - 2], costs[i - 1])
+    return costs[n - 1]
 
 
 if __name__ == '__main__':
