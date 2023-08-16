@@ -1,6 +1,17 @@
+"""
+Для решения задач методом динамического программирования нужно сформулировать рекуррентную задачу.
+Рассматриваем последний шаг: как можно попасть в целевой случай? Обычно для этого нужно решить аналогичную задачу
+для предыдущих ситуаций. Таким образом, нужно вывести формулу, которая будет вычислять значение для текущего случая
+по предыдущим. А первые случаи задаются вручную как краевые ситуации.
+"""
+
+
 def fibonachi_numbers(n):
     """
     Функция ищет n-ное число Фибоначчи
+    Рекуррентная задача:
+        fibs(n) = fibs(n-1)+fibs(n-2),
+        при этом fibs(0) = 0, fibs(1) = 1.
     :param n: int - номер искомого числа Фибоначчи
     :return: int - значение числа
     """
@@ -14,7 +25,11 @@ def trajectory_count(n: int, blocked: list):
     """
     Кузнечику нужно достичь точки n. Начинает прыгать он из точки 1. Сколько способов это сделать существует,
     если он может прыгать на следующую точку и через одну (+1, +2). При этом есть заблокированные точки,
-    которые указаны в списке blocked
+    которые указаны в списке blocked.
+    Рекуррентная задача:
+        count(n) = count(n-1) + count(n-2),
+        при этом count(0) = 0, count(1) = 1, на каждом шаге также проверяется, не является ли точка заблокированной:
+        Если является, тогда количество способов в неё попасть равно 0.
     :param n: int - конечная точка
     :param blocked: list - список заблокированных точек
     :return: int - количество способов достигнуть конечной точки
@@ -30,7 +45,10 @@ def trajectory_count(n: int, blocked: list):
 def count_min_cost(n: int, prices: list):
     """
     Вычисляет минимальную стоимость перемещения из точки 0 в точку n-1. Посещение каждой точки имеет свою цену,
-    которая указана в списке prices
+    которая указана в списке prices.
+    Рекуррентная задача:
+        costs(n) = prices[n] + min(costs(n-2), costs(n-1)),
+        при этом costs(0) = price[0], costs(1) = price[0] + price[1].
     :param n: int - конечная точка
     :param prices: list - список стоимостей посещения точек
     :return: float - минимальная стоимость
@@ -41,10 +59,97 @@ def count_min_cost(n: int, prices: list):
     return costs[n - 1]
 
 
+def chess_king(m: int, n: int):
+    """
+    Шахматный король расположен в ячейке 1, 1. Ему нужно попасть в ячейку m, n. Король имеет право ходить только
+    вниз, вправо и по диагонали вниз вправо. Сколько существует способов это сделать?
+    Рекуррентная задача:
+        count(m, n) = count(m-1,n) + count(m, n-1) + count(m-1, n-1),
+        при этом введём фиктивные столбец и строку 0, 0, заполненные нулями,
+        а также count(1,1) = 1.
+    :param m: int - номер столбца конечной клетки
+    :param n: int - номер строки конечной клетки
+    :return: int - количество способов
+    """
+    count = [[0] * (m + 1) for _ in range(n + 1)]
+    count[1][1] = 1
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if i == j == 1:
+                continue
+            count[i][j] = count[i - 1][j] + count[i][j - 1] + count[i - 1][j - 1]
+    return count[n][m]
+
+
+def lcs(a: list, b: list):
+    """
+    Поиск наибольшей общей подпоследовательности в двух списках. Для этого заполняется таблица max_ss
+    размером len(a), len(b), в которой отображаются длины максимальных подпоследовательностей,
+    начиная сначала.
+    Рекуррентная задача:
+        max_ss(i, j) = {1+max_ss(i-1, j-1), если a[i] == b[j],
+                   max(max_ss(i-1, j), max_ss(i, j-1)), если a[i] != b[j]}
+    :param a: list - первый список
+    :param b: list - второй список
+    :return: list - общая подпоследовательность
+    """
+    max_ss = [[0] * (len(b) + 1) for _ in range(len(a) + 1)]
+    for i in range(1, len(a) + 1):
+        for j in range(1, len(b) + 1):
+            if a[i - 1] == b[j - 1]:
+                max_ss[i][j] = 1 + max_ss[i - 1][j - 1]
+            else:
+                max_ss[i][j] = max(max_ss[i - 1][j], max_ss[i][j - 1])
+
+    # Восстановление подпоследовательности (проходим таблицу max_ss с конца,
+    # если значение в ячейке равно одному из соседних, тогда просто уменьшаем соответствующий индекс, иначе
+    # добавляем в подпоследовательность символ и уменьшаем оба индекса)
+    i = len(a)
+    j = len(b)
+    subsequence = [0] * max_ss[-1][-1]
+    while i or j:
+        if max_ss[i][j] == max_ss[i - 1][j]:
+            i -= 1
+        elif max_ss[i][j] == max_ss[i][j - 1]:
+            j -= 1
+        else:
+            subsequence[max_ss[i][j] - 1] = a[i - 1] if i else b[j - 1]
+            i -= 1
+            j -= 1
+    return subsequence
+
+
+def gis_len(a: list):
+    """
+    Поиск наибольшей возрастающей подпоследовательности в массиве a.
+    Рекуррентная задача:
+        gis_list(i) = {gis_list(i-1)+1, если a[i]>a[i-1],
+                       gis_list(i-1), в противном случае
+    :param a: list - массив, в котором ищется подпоследовательность
+    :return: list - искомая подпоследовательсность
+    """
+    gis_list = [0] * (len(a))
+    # Выбираем следующий элемент массива
+    for i in range(len(a)):
+        # Проходимся по элементам подмассива и сравниваем его значения со следующим за подмассивом элементом i,
+        # а также больше ли подпоследовательность того элемента среди всех в данном подмассиве
+        for j in range(i):
+            if a[i] > a[j] and gis_list[j] > gis_list[i]:
+                gis_list[i] = gis_list[j]
+        gis_list[i] += 1
+    return max(gis_list)
+
+
 if __name__ == '__main__':
-    n = int(input("n: "))
+    # n = int(input("n: "))
     # print(fibonachi_numbers(n))
     # blocked = list(map(int, input("blocked: ").split()))
     # print(trajectory_count(n, blocked))
-    prices = list(map(int, input(f"prices ({n} numbers): ").split()))
-    print(count_min_cost(n, prices))
+    # prices = list(map(int, input(f"prices ({n} numbers): ").split()))
+    # print(count_min_cost(n, prices))
+    # m = int(input("m: "))
+    # print(chess_king(m, n))
+    a = [int(i) for i in input("a: ").split()]
+    # b = [int(i) for i in input("b: ").split()]
+    # print(lcs(a, b))
+    print(gis_len(a))
