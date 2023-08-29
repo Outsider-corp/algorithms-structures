@@ -140,6 +140,36 @@ def gis_len(a: list):
     return max(gis_list)
 
 
+def levenstein(a: str, b: str):
+    """
+    Нахождение минимального редакционного расстояния между двумя строками. Редакционное расстрояние - количество
+    ошибок, которые нужно исправить для того, чтобы строки совпали.
+    Варианты ошибок:
+        1) Добавление символа
+        2) Удаление символа
+        3) Замена символа
+    :param a: str - изначальная строка
+    :param b: str - конечная строка
+    :return: int - минимальное редакционное расстрояние
+    """
+    red = [[i + j if i * j == 0 else 0 for j in range(len(b) + 1)] for i in range(len(a) + 1)]
+    for i in range(1, len(a) + 1):
+        for j in range(1, len(b) + 1):
+            if a[i - 1] == b[j - 1]:
+                red[i][j] = red[i - 1][j - 1]
+            else:
+                red[i][j] = 1 + min(red[i - 1][j], red[i][j - 1], red[i - 1][j - 1])
+    return red[len(a)][len(b)]
+
+def find_substring(s:str, subs:str):
+    """
+    Поиск подстроки subs в строке s
+    :param s: str - строка, в которой идёт поиск.
+    :param subs: str - подстрока, которая ищется
+    :return:
+    """
+    pass
+
 if __name__ == '__main__':
     # n = int(input("n: "))
     # print(fibonachi_numbers(n))
@@ -149,7 +179,10 @@ if __name__ == '__main__':
     # print(count_min_cost(n, prices))
     # m = int(input("m: "))
     # print(chess_king(m, n))
-    a = [int(i) for i in input("a: ").split()]
+    # a = [int(i) for i in input("a: ").split()]
     # b = [int(i) for i in input("b: ").split()]
     # print(lcs(a, b))
-    print(gis_len(a))
+    # print(gis_len(a))
+    a = input()
+    b = input()
+    print(levenstein(a, b))
