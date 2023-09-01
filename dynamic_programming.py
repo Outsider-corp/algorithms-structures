@@ -170,6 +170,12 @@ def find_substring(s:str, subs:str):
     """
     pass
 
+def kmp():
+    """
+
+    :return:
+    """
+
 if __name__ == '__main__':
     # n = int(input("n: "))
     # print(fibonachi_numbers(n))
