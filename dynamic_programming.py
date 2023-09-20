@@ -13,7 +13,7 @@ def fibonachi_numbers(n):
         fibs(n) = fibs(n-1)+fibs(n-2),
         при этом fibs(0) = 0, fibs(1) = 1.
     :param n: int - номер искомого числа Фибоначчи
-    :return: int - значение числа
+    :return: int - значение числа.
     """
     fibs = [0, 1] + [0] * (n - 1)
     for i in range(2, n + 1):
@@ -32,7 +32,7 @@ def trajectory_count(n: int, blocked: list):
         Если является, тогда количество способов в неё попасть равно 0.
     :param n: int - конечная точка
     :param blocked: list - список заблокированных точек
-    :return: int - количество способов достигнуть конечной точки
+    :return: int - количество способов достигнуть конечной точки.
     """
     counts = [0, 1] + [0] * (n - 1)
     counts[2] = 0 if 2 in blocked else 1
@@ -51,7 +51,7 @@ def count_min_cost(n: int, prices: list):
         при этом costs(0) = price[0], costs(1) = price[0] + price[1].
     :param n: int - конечная точка
     :param prices: list - список стоимостей посещения точек
-    :return: float - минимальная стоимость
+    :return: float - минимальная стоимость.
     """
     costs = [prices[0], prices[0] + prices[1]] + [0] * (n - 2)
     for i in range(2, n):
@@ -69,7 +69,7 @@ def chess_king(m: int, n: int):
         а также count(1,1) = 1.
     :param m: int - номер столбца конечной клетки
     :param n: int - номер строки конечной клетки
-    :return: int - количество способов
+    :return: int - количество способов.
     """
     count = [[0] * (m + 1) for _ in range(n + 1)]
     count[1][1] = 1
@@ -91,7 +91,7 @@ def lcs(a: list, b: list):
                    max(max_ss(i-1, j), max_ss(i, j-1)), если a[i] != b[j]}
     :param a: list - первый список
     :param b: list - второй список
-    :return: list - общая подпоследовательность
+    :return: list - общая подпоследовательность.
     """
     max_ss = [[0] * (len(b) + 1) for _ in range(len(a) + 1)]
     for i in range(1, len(a) + 1):
@@ -126,7 +126,7 @@ def gis_len(a: list):
         gis_list(i) = {gis_list(i-1)+1, если a[i]>a[i-1],
                        gis_list(i-1), в противном случае
     :param a: list - массив, в котором ищется подпоследовательность
-    :return: list - искомая подпоследовательсность
+    :return: list - искомая подпоследовательсность.
     """
     gis_list = [0] * (len(a))
     # Выбираем следующий элемент массива
@@ -150,7 +150,7 @@ def levenstein(a: str, b: str):
         3) Замена символа
     :param a: str - изначальная строка
     :param b: str - конечная строка
-    :return: int - минимальное редакционное расстрояние
+    :return: int - минимальное редакционное расстрояние.
     """
     red = [[i + j if i * j == 0 else 0 for j in range(len(b) + 1)] for i in range(len(a) + 1)]
     for i in range(1, len(a) + 1):
@@ -161,20 +161,34 @@ def levenstein(a: str, b: str):
                 red[i][j] = 1 + min(red[i - 1][j], red[i][j - 1], red[i - 1][j - 1])
     return red[len(a)][len(b)]
 
-def find_substring(s:str, subs:str):
-    """
-    Поиск подстроки subs в строке s
-    :param s: str - строка, в которой идёт поиск.
-    :param subs: str - подстрока, которая ищется
-    :return:
-    """
-    pass
 
-def kmp():
+def kmp(s: str, subs: str = '') -> bool:
     """
+    Ищет подстроку subs в строке s.
 
-    :return:
+    :param s: str - начальная строка
+    :param subs: str - искомая подстрока
+    :return: bool - найдена ли подстрока в строке
     """
+    s = subs + '#' + s
+
+    pi_f = [0] * len(s)
+    j = 0
+    i = 1
+    while i < len(s):
+        if s[j] != s[i]:
+            if not j:
+                pi_f[i] = 0
+            else:
+                j = pi_f[i - 1]
+        else:
+            j += 1
+            pi_f[i] = j
+            if j == len(subs):
+                return True
+        i += 1
+    return False
+
 
 if __name__ == '__main__':
     # n = int(input("n: "))
@@ -191,4 +205,5 @@ if __name__ == '__main__':
     # print(gis_len(a))
     a = input()
     b = input()
-    print(levenstein(a, b))
+    # print(levenstein(a, b))
+    print(kmp(a, b))
